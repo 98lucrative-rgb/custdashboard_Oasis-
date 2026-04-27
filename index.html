@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lotus's Oasis Pattanakarn 30 — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--rb:#1B3A6B;--rb2:#2756A6;--rb3:#4A80D4;--rbp:#EBF4FF;--lg:#2ECC71;--lgp:#E9FBF2;--gold:#E6A817;--or:#E07B39;--red:#C0392B;--teal:#17A589;--bg:#F0F4FB;--sur:#fff;--sur2:#E8EEF9;--tx:#0D1E3A;--tx2:#2E4A7A;--tx3:#6B85B0;--bdr:#C2D4EE;--r:14px;--r2:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--tx)}
+.sb{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--rb);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo .b{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+.sb-logo .n{font-size:16px;font-weight:700;color:#fff;line-height:1.3}
+.sb-logo .n em{color:var(--lg);font-style:normal}
+.sb-logo .s{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.nav-i{margin:2px 8px;padding:9px 13px;border-radius:var(--r2);cursor:pointer;font-size:13px;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:9px;transition:all .15s}
+.nav-i:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-i.active{background:rgba(46,204,113,.15);color:#fff;font-weight:600;border-left:3px solid var(--lg);padding-left:10px}
+.sb-sec{padding:14px 14px 3px;font-size:9px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.14em;text-transform:uppercase}
+.fc{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--r2);padding:10px 12px;margin:0 8px 6px;cursor:pointer;transition:all .15s}
+.fc.active{background:rgba(46,204,113,.14);border-color:rgba(46,204,113,.4)}
+.fc .fn{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fc .fd{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.fc .fct{display:inline-flex;align-items:center;gap:3px;background:var(--lg);color:#07291A;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:4px}
+.dot{width:5px;height:5px;border-radius:50%;background:#07291A;animation:dp 1.5s infinite}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-add{margin:4px 8px 12px;background:transparent;border:1.5px dashed rgba(255,255,255,.2);border-radius:var(--r2);padding:8px;color:rgba(255,255,255,.45);font-size:12px;cursor:pointer;text-align:center;font-family:inherit;width:calc(100% - 16px);transition:all .15s}
+.btn-add:hover{border-color:var(--lg);color:var(--lg)}
+.main{margin-left:250px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--sur);border-bottom:1px solid var(--bdr);padding:12px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar h1{font-size:16px;font-weight:700;color:var(--tx)}
+.topbar p{font-size:11px;color:var(--tx3)}
+.tr{display:flex;gap:7px;align-items:center}
+.badge-live{display:flex;align-items:center;gap:5px;background:var(--lgp);color:#1A6B40;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;border:1px solid #A8DFC0}
+.bdot{width:6px;height:6px;border-radius:50%;background:var(--lg);animation:dp 1.5s infinite}
+.btn{padding:5px 12px;border-radius:var(--r2);font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--sur);color:var(--tx2);font-family:inherit;transition:all .15s}
+.btn:hover{background:var(--sur2)}
+.btn-p{background:var(--rb);color:#fff;border-color:var(--rb)}
+.btn-p:hover{background:var(--rb2)}
+.lref{font-size:11px;color:var(--tx3)}
+.content{padding:22px 26px;flex:1}
+.sbar{display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:var(--r2);font-size:12px;margin-bottom:14px}
+.sbar.ok{background:var(--lgp);color:#1A6B40;border:1px solid #A8DFC0}
+.sbar.error{background:#FEF0EF;color:#8B1A1A;border:1px solid #F5C6C6}
+.sbar.gone{display:none}
+.fbar{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 16px;margin-bottom:18px;display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.flab{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em}
+.fbar input[type=date]{border:1px solid var(--bdr);border-radius:var(--r2);padding:5px 10px;font-size:12px;color:var(--tx);font-family:inherit;outline:none;background:var(--bg)}
+.fbar input[type=date]:focus{border-color:var(--rb2)}
+.qbtns{display:flex;gap:4px}
+.qbtn{padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:var(--sur);color:var(--tx2);font-family:inherit;transition:all .15s}
+.qbtn:hover,.qbtn.active{background:var(--rbp);color:var(--rb2);border-color:var(--rb3)}
+.kg{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:18px}
+.kpi{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:15px 17px;position:relative;overflow:hidden;transition:all .2s}
+.kpi:hover{box-shadow:0 8px 28px rgba(27,58,107,.13);transform:translateY(-2px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rb)}
+.kpi.g::before{background:var(--lg)}.kpi.go::before{background:var(--gold)}.kpi.o::before{background:var(--or)}.kpi.r::before{background:var(--red)}
+.kpi-ico{position:absolute;right:12px;top:12px;font-size:19px;opacity:.12}
+.kpi-lbl{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:700;color:var(--tx);font-family:'IBM Plex Mono',monospace;line-height:1;margin-bottom:3px}
+.kpi-sub{font-size:11px;color:var(--tx3)}
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:13px;margin-bottom:13px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:13px}
+.g22{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.cc{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:0 2px 10px rgba(27,58,107,.06)}
+.cc-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.cc-t{font-size:13px;font-weight:700;color:var(--tx)}
+.cc-s{font-size:11px;color:var(--tx3);margin-top:1px}
+.cc-b{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--rbp);color:var(--rb2)}
+canvas{max-height:190px}.chlg{max-height:240px}
+.page{display:none}.page.active{display:block}
+.ic{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:16px}
+.ic-t{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.fb{border-left:3px solid var(--bdr);padding:7px 10px;margin-bottom:7px;border-radius:0 var(--r2) var(--r2) 0;background:var(--bg)}
+.fb.issue{border-left-color:var(--red)}.fb.pos{border-left-color:var(--lg)}.fb.sug{border-left-color:var(--or)}
+.fb-t{font-size:12px;color:var(--tx);line-height:1.5}.fb-m{font-size:10.5px;color:var(--tx3);margin-top:1px}
+.pr{margin-bottom:9px}
+.pr-r{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;color:var(--tx2)}
+.pr-t{height:5px;background:var(--sur2);border-radius:3px;overflow:hidden}
+.pr-f{height:100%;background:var(--rb2);border-radius:3px;transition:width .8s ease}
+.pr-f.g{background:var(--lg)}.pr-f.gd{background:var(--gold)}
+.tbox{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:13px}
+.ti{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--sur2)}
+.ti:last-child{border-bottom:none}
+.tii{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tii.g{background:var(--lgp)}.tii.o{background:#FEF3E2}.tii.r{background:#FEF0EF}.tii.b{background:var(--rbp)}
+.ti h4{font-size:12.5px;font-weight:700;color:var(--tx);margin-bottom:2px}
+.ti p{font-size:11.5px;color:var(--tx2);line-height:1.5}
+.pb{display:inline-block;padding:1px 7px;border-radius:20px;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-left:5px}
+.pb.high{background:#FEF0EF;color:var(--red)}.pb.med{background:#FEF3E2;color:#A06000}.pb.low{background:var(--lgp);color:#1A7A47}
+.dtbl{width:100%;border-collapse:collapse}
+.dtbl th{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;padding:7px 11px;text-align:left;border-bottom:1px solid var(--bdr)}
+.dtbl td{font-size:12px;color:var(--tx);padding:7px 11px;border-bottom:1px solid var(--sur2)}
+.dtbl tr:hover td{background:var(--rbp)}
+.mo{position:fixed;inset:0;background:rgba(10,25,55,.6);z-index:999;display:none;align-items:center;justify-content:center}
+.mo.open{display:flex}
+.md{background:var(--sur);border-radius:var(--r);padding:24px;width:480px;max-width:92vw}
+.md h2{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:3px}
+.md .ms{font-size:12px;color:var(--tx3);margin-bottom:16px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:10.5px;font-weight:700;color:var(--tx2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.fg input,.fg select{width:100%;border:1px solid var(--bdr);border-radius:var(--r2);padding:8px 11px;font-size:13px;font-family:inherit;color:var(--tx);background:var(--bg);outline:none}
+.fg input:focus,.fg select:focus{border-color:var(--rb2)}
+.fg .hint{font-size:10.5px;color:var(--tx3);margin-top:3px}
+.ma{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.enote{font-size:11px;color:var(--tx3);text-align:center;margin-top:18px;padding:12px;border:1px dashed var(--bdr);border-radius:var(--r2);line-height:1.8}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+@media(max-width:1200px){.kg{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.g2,.g3,.g22{grid-template-columns:1fr}.kg{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<nav class="sb">
+  <div class="sb-logo">
+    <div class="b">🌿 Lotus's Oasis</div>
+    <div class="n">Pattanakarn <em>30</em></div>
+    <div class="s">Survey Intelligence Dashboard</div>
+  </div>
+  <div style="padding:10px 6px 2px">
+    <div class="nav-i active" onclick="goPage('overview',this)"><span>📊</span>Overview</div>
+    <div class="nav-i" onclick="goPage('analysis',this)"><span>🔍</span>Deep Analysis</div>
+    <div class="nav-i" onclick="goPage('feedback',this)"><span>💬</span>Feedback</div>
+    <div class="nav-i" onclick="goPage('trends',this)"><span>📈</span>Trends & Insights</div>
+  </div>
+  <div class="sb-sec">แบบสอบถาม</div>
+  <div id="formList"></div>
+  <div style="flex:1"></div>
+  <button class="btn-add" onclick="openMo()">＋ เพิ่มแบบสอบถาม</button>
+</nav>
+
+<div class="main">
+  <header class="topbar">
+    <div><h1 id="pgT">Customer Survey — Overview</h1><p id="pgS">Lotus's Oasis Pattanakarn 30 · ข้อมูลจาก Google Sheets</p></div>
+    <div class="tr">
+      <div class="badge-live"><div class="bdot"></div>Live</div>
+      <span class="lref" id="lref"></span>
+      <button class="btn" onclick="refresh()">↻ รีเฟรช</button>
+      <button class="btn" onclick="window.print()">🖨 พิมพ์</button>
+      <button class="btn btn-p" onclick="openMo()">＋ เพิ่ม Form</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="sbar gone" id="sbar"></div>
+
+    <div class="fbar">
+      <span class="flab">📅 ช่วงเวลา</span>
+      <input type="date" id="dF"><span style="color:var(--tx3)">→</span><input type="date" id="dT">
+      <button class="btn" onclick="applyF()">กรอง</button>
+      <div class="qbtns">
+        <button class="qbtn active" onclick="setQ('week',this)">7 วัน</button>
+        <button class="qbtn" onclick="setQ('month',this)">เดือนนี้</button>
+        <button class="qbtn" onclick="setQ('q2',this)">Q2 2026</button>
+        <button class="qbtn" onclick="setQ('all',this)">ทั้งหมด</button>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="kg">
+        <div class="kpi"><div class="kpi-ico">👥</div><div class="kpi-lbl">ผู้ตอบทั้งหมด</div><div class="kpi-val" id="k0">–</div><div class="kpi-sub">คน</div></div>
+        <div class="kpi go"><div class="kpi-ico">💰</div><div class="kpi-lbl">Avg Spend/บิล</div><div class="kpi-val" id="k1">–</div><div class="kpi-sub">บาท</div></div>
+        <div class="kpi g"><div class="kpi-ico">⭐</div><div class="kpi-lbl">ลูกค้าประจำ 2+/wk</div><div class="kpi-val" id="k2">–</div><div class="kpi-sub">%</div></div>
+        <div class="kpi o"><div class="kpi-ico">📱</div><div class="kpi-lbl">Online / O2O</div><div class="kpi-val" id="k3">–</div><div class="kpi-sub">%</div></div>
+        <div class="kpi r"><div class="kpi-ico">🕌</div><div class="kpi-lbl">มุสลิม</div><div class="kpi-val" id="k4">–</div><div class="kpi-sub">%</div></div>
+      </div>
+      <div class="g2">
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">จำนวนผู้ตอบ รายวัน</div><div class="cc-s">Daily response volume</div></div><span class="cc-b">Timeline</span></div><canvas id="cTL" class="chlg"></canvas></div>
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">ช่วงเวลาที่มา</div><div class="cc-s">Visit time</div></div></div><canvas id="cVT"></canvas></div>
+      </div>
+      <div class="g3">
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">เพศ</div><div class="cc-s">Gender</div></div></div><canvas id="cG"></canvas></div>
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">ช่วงอายุ</div><div class="cc-s">Age range</div></div></div><canvas id="cA"></canvas></div>
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">มากับใคร</div><div class="cc-s">Come with</div></div></div><canvas id="cCW"></canvas></div>
+      </div>
+      <div class="g2">
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">ความถี่การมา</div><div class="cc-s">Visit frequency</div></div></div><canvas id="cFR" class="chlg"></canvas></div>
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">Spend Distribution (฿)</div><div class="cc-s">บาท ต่อบิล</div></div></div><canvas id="cSP"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ANALYSIS -->
+    <div class="page" id="page-analysis">
+      <div class="g22">
+        <div class="ic"><div class="ic-t">🏠 เหตุผลที่มาร้านนี้</div><div id="whyList"></div></div>
+        <div class="ic"><div class="ic-t">💰 Avg Spend ตามความถี่</div><canvas id="cSF"></canvas></div>
+      </div>
+      <div class="cc" style="margin-bottom:13px">
+        <div class="cc-h"><div><div class="cc-t">เพศ × ความถี่</div><div class="cc-s">Gender × Frequency cross-tab</div></div></div>
+        <canvas id="cGF" class="chlg"></canvas>
+      </div>
+      <div class="cc">
+        <div class="cc-h"><div><div class="cc-t">O2O Adoption</div><div class="cc-s">การใช้ช่องทาง Online</div></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center">
+          <canvas id="cO2"></canvas><div id="o2info"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="page" id="page-feedback">
+      <div class="g22">
+        <div class="ic"><div class="ic-t">🔴 ปัญหา (Issues)</div><div id="fbI"></div></div>
+        <div class="ic"><div class="ic-t">🟡 คำแนะนำ (Suggestions)</div><div id="fbS"></div></div>
+      </div>
+      <div class="ic" style="margin-bottom:13px"><div class="ic-t">🟢 Positive Feedback</div><div id="fbP"></div></div>
+      <div class="cc"><div class="cc-h"><div><div class="cc-t">Feedback Themes — จำนวนที่กล่าวถึง</div></div></div><canvas id="cTH" class="chlg"></canvas></div>
+    </div>
+
+    <!-- TRENDS -->
+    <div class="page" id="page-trends">
+      <div class="tbox"><div class="ic-t" style="margin-bottom:12px">🎯 Strategic Insights — สำหรับผู้บริหาร</div><div id="strat"></div></div>
+      <div class="g22">
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">Priority Action Matrix</div><div class="cc-s">เรียงตามความสำคัญ</div></div></div><div id="actM"></div></div>
+        <div class="cc"><div class="cc-h"><div><div class="cc-t">Segment Value</div><div class="cc-s">กลุ่มลูกค้า × Avg Spend</div></div></div><canvas id="cSG"></canvas></div>
+      </div>
+      <div class="enote">📋 C-Level Report · Real-time จาก Google Sheets · Auto-refresh ทุก 5 นาที · <strong>Lotus's Oasis Pattanakarn 30</strong> · Q2 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="mo" id="mo">
+  <div class="md">
+    <h2>➕ เพิ่มแบบสอบถามใหม่</h2>
+    <p class="ms">วาง Google Sheets URL — ดึงข้อมูล Real-time</p>
+    <div class="fg"><label>ชื่อแบบสอบถาม</label><input id="mN" placeholder="เช่น Survey Q3 2026"></div>
+    <div class="fg"><label>Google Sheets URL</label><input id="mU" placeholder="https://docs.google.com/spreadsheets/d/..."><div class="hint">⚠️ ต้องตั้ง Sheets เป็น "Anyone with the link can view"</div></div>
+    <div class="fg"><label>Sheet Tab Name</label><input id="mS" placeholder="Form Responses 1"></div>
+    <div class="fg"><label>ช่วงเวลา</label><div style="display:flex;gap:8px;align-items:center"><input type="date" id="mSt" style="flex:1"><span style="color:var(--tx3)">ถึง</span><input type="date" id="mEn" style="flex:1"></div></div>
+    <div class="ma"><button class="btn" onclick="closeMo()">ยกเลิก</button><button class="btn btn-p" onclick="saveF()">💾 บันทึก & โหลด</button></div>
+  </div>
+</div>
+
+<script>
+// ═══ DATA (embedded from Google Sheets) ═══
+const EMBEDDED = [{"date": "2026-04-14", "gender": "Male", "age": "31-40", "comeWith": "Family", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ยังไม่มี", "spend": 742.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Male", "age": "50+", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Afternoon", "feedback": "ยังไม่มี", "spend": 575.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "Avocado น้อย มาแล้วบางลูกไม่ดี", "spend": 521.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "-", "spend": 1288.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "First time", "muslim": false, "time": "Afternoon", "feedback": "ยังไม่มี", "spend": 689.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Male", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ยังไม่มี", "spend": 854.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Male", "age": "31-40", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "เจ้าของร้านเป็นลาว", "spend": 511.0, "online": true, "why": ""}, {"date": "2026-04-14", "gender": "Male", "age": "31-40", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "เจ้าของร้านเป็นลาว", "spend": 713.0, "online": true, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ไก่ทั้งตัวยังไม่ปรุง", "spend": 568.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Male", "age": "41-50", "comeWith": "Family", "freq": "Once a week", "muslim": false, "time": "Afternoon", "feedback": "ห้องน้ำสะอาดดี", "spend": 783.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "ไม่มี ของครบ ของเยอะ", "spend": 764.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "ของเยอะ ของครบ", "spend": 527.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ไม่มี ของครบ", "spend": 1670.0, "online": false, "why": "บ้านใกล้"}, {"date": "2026-04-14", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ไม่มีแคชเชียร์ ทางเดินแคบ", "spend": 1820.0, "online": false, "why": "บ้านใกล้"}, {"date": "2026-04-14", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ของสด ผลไม้สู้ Tops ไม่ได้", "spend": 1215.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Male", "age": "41-50", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ไม่มี", "spend": 524.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Male", "age": "50+", "comeWith": "Alone", "freq": "Once a week", "muslim": false, "time": "Afternoon", "feedback": "อยากให้มี wheelchair", "spend": 1000.0, "online": false, "why": "บ้านอยู่ใกล้"}, {"date": "2026-04-14", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ยังไม่มี ดีค่ะ", "spend": 2442.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ยังไม่มี โอเคดี", "spend": 533.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ไม่มี", "spend": 699.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "อยากได้หมู/เนื้อสัตว์ชั่งกก.", "spend": 1000.0, "online": true, "why": "สวยกว่าสาขาอื่น/ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "-", "spend": 300.0, "online": false, "why": "มีร้านอาหาร ครบจบที่เดียว"}, {"date": "2026-04-14", "gender": "Male", "age": "21-30", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "-", "spend": 100.0, "online": false, "why": "ใกล้ที่ทำงาน"}, {"date": "2026-04-14", "gender": "Male", "age": "Under 20", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "เพิ่มแอลกอฮอล์ บรั่นดี", "spend": 100.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "More than twice a week", "muslim": true, "time": "Afternoon", "feedback": "เพิ่มสินค้าฮาลาล ของสด", "spend": 500.0, "online": true, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "50+", "comeWith": "Alone", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "ที่จอดรถไม่พอช่วงเย็นวันอาทิตย์", "spend": 800.0, "online": false, "why": "ใกล้บ้านเดินทางสะดวก"}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Once a week", "muslim": true, "time": "Afternoon", "feedback": "เพิ่มน้ำยาปรับผ้านุ่มสำหรับลูกเล็ก", "spend": 500.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Male", "age": "50+", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ไม่มี", "spend": 1000.0, "online": false, "why": "ใกล้บ้าน มีส่วนลด โปรโมชัน"}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "พนักงาน counter ทำงานช้า", "spend": 1500.0, "online": false, "why": "อยู่แถวนี้"}, {"date": "2026-04-14", "gender": "Male", "age": "41-50", "comeWith": "Alone", "freq": "Once a week", "muslim": false, "time": "Evening", "feedback": "สินค้า Lotus พัฒนาการหลากหลายกว่า", "spend": 529.0, "online": false, "why": "ใกล้บ้าน ที่จอดรถดี"}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "โซนผักมีตัวเลือกไม่เยอะ", "spend": 2000.0, "online": true, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ที่จอดรถ", "spend": 0.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "More than twice a week", "muslim": true, "time": "Evening", "feedback": "อยากให้เคาว์เตอร์อัตโนมัติ แคชเชียช้า", "spend": 700.0, "online": false, "why": "ไอติมเมจิ"}, {"date": "2026-04-14", "gender": "Female", "age": "50+", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "-", "spend": 560.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Male", "age": "31-40", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Evening", "feedback": "อยากให้มีหลังคาที่จอดรถ", "spend": 800.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Male", "age": "21-30", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "อยากรู้เวลาเภสัชเปิดปิด", "spend": 300.0, "online": false, "why": ""}, {"date": "2026-04-14", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ไม่มี", "spend": 1000.0, "online": false, "why": "แวะผ่าน"}, {"date": "2026-04-14", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Evening", "feedback": "น้ำขวดคริสตัลมีไอน้ำ", "spend": 1000.0, "online": true, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "31-40", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ผักสลัดแพง แป้งซอสพรีเมี่ยมน้อย", "spend": 600.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-14", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "โซนผักออแกนิก", "spend": 1000.0, "online": true, "why": "ใหม่ ใหญ่"}, {"date": "2026-04-14", "gender": "Male", "age": "41-50", "comeWith": "Family", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ที่จอดรถน้อย/ร้านอาหารในมอลล์น้อย", "spend": 400.0, "online": false, "why": "มาครั้งแรก สาขาสวย"}, {"date": "2026-04-15", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Evening", "feedback": "-", "spend": 700.0, "online": false, "why": "ใหม่กว่า Tops กว้าง ใกล้บ้าน"}, {"date": "2026-04-15", "gender": "Female", "age": "50+", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Afternoon", "feedback": "-", "spend": 200.0, "online": true, "why": "ใกล้บ้าน ของครบกว่า"}, {"date": "2026-04-15", "gender": "Male", "age": "31-40", "comeWith": "Alone", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "มีครบแล้ว เพิ่มของลดราคา", "spend": 120.0, "online": false, "why": "Range เยอะ"}, {"date": "2026-04-15", "gender": "Male", "age": "31-40", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ขนมปังอบสดน้อยกว่าสาขาพัฒ 20", "spend": 400.0, "online": true, "why": "ใกล้บ้าน"}, {"date": "2026-04-15", "gender": "Female", "age": "Under 20", "comeWith": "Alone", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "ไม่มี", "spend": 130.0, "online": false, "why": "มีเนย"}, {"date": "2026-04-15", "gender": "Male", "age": "41-50", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "-", "spend": 150.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-15", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Evening", "feedback": "-", "spend": 450.0, "online": false, "why": "มาหลังเลิกงาน"}, {"date": "2026-04-15", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Once a week", "muslim": false, "time": "Evening", "feedback": "ไอติมหมดไว ซอฟต์เสิร์ฟ", "spend": 200.0, "online": false, "why": "ใกล้"}, {"date": "2026-04-15", "gender": "Male", "age": "31-40", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "-", "spend": 300.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-15", "gender": "Male", "age": "41-50", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "-", "spend": 100.0, "online": false, "why": "มาเยี่ยมญาติ"}, {"date": "2026-04-15", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ยังไม่มี ของครบ", "spend": 400.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-15", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "-", "spend": 0.0, "online": false, "why": "หาของกิน"}, {"date": "2026-04-15", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ดูคนน้อย movement ไม่เยอะ", "spend": 200.0, "online": false, "why": "มาครั้งแรก สาขาสวยดี"}, {"date": "2026-04-15", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Evening", "feedback": "ผลไม้ฟรีซหายาก", "spend": 300.0, "online": false, "why": "ของเยอะ"}, {"date": "2026-04-15", "gender": "Male", "age": "41-50", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ยังไม่มี", "spend": 200.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-15", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "ป้ายราคาไม่ครบ", "spend": 100.0, "online": false, "why": ""}, {"date": "2026-04-15", "gender": "Female", "age": "41-50", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ยังไม่มี", "spend": 300.0, "online": false, "why": "ลองมาดู"}, {"date": "2026-04-15", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "ของสดเยอะแต่ขาดเครื่องปรุง", "spend": 300.0, "online": false, "why": "เปิดใหม่"}, {"date": "2026-04-15", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "อยากให้เพิ่มผักชีฝรั่ง กระเทียมแกะ", "spend": 500.0, "online": false, "why": "บ้านใกล้"}, {"date": "2026-04-15", "gender": "Female", "age": "41-50", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ห้องน้ำไม่หอม", "spend": 200.0, "online": false, "why": "ลองมาดู"}, {"date": "2026-04-15", "gender": "Female", "age": "41-50", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ไม่มี", "spend": 250.0, "online": true, "why": "ใกล้บ้านของเยอะ"}, {"date": "2026-04-15", "gender": "Male", "age": "31-40", "comeWith": "Family", "freq": "Once a week", "muslim": false, "time": "Evening", "feedback": "ปลาแอนโชวี่เล็ก มันไหนไป", "spend": 600.0, "online": false, "why": "ลองมา"}, {"date": "2026-04-15", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "อาหารสดตัก แพคใหญ่ไป ส่งช้า", "spend": 200.0, "online": true, "why": "ใกล้"}, {"date": "2026-04-15", "gender": "Male", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": true, "time": "Evening", "feedback": "ของคุ้นตาแล้ว", "spend": 0.0, "online": false, "why": "ราคาดี ของเยอะดี"}, {"date": "2026-04-15", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "เลือด ผัก", "spend": 700.0, "online": false, "why": "บ้านใกล้"}, {"date": "2026-04-16", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "First time", "muslim": true, "time": "Evening", "feedback": "เพิ่มสินค้าขนาดใหญ่ เช่นซอสน้ำมันหอย", "spend": 300.0, "online": false, "why": "สะดวกในการเดินทาง"}, {"date": "2026-04-16", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Afternoon", "feedback": "ที่จอดรถเพิ่ม", "spend": 500.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-16", "gender": "Male", "age": "41-50", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "ชั้นสองยังเงียบอยู่", "spend": 150.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-16", "gender": "Male", "age": "41-50", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ที่จอดรถคนพิการ ช้า ปักหมุด delivery ไม่ขึ้น", "spend": 200.0, "online": true, "why": "ใกล้ ของเยอะ"}, {"date": "2026-04-16", "gender": "Female", "age": "31-40", "comeWith": "Alone", "freq": "Once a week", "muslim": false, "time": "Evening", "feedback": "ยังไม่มี", "spend": 180.0, "online": false, "why": ""}, {"date": "2026-04-16", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "หมู ของสด มาบางวันหมดไม่ครบ ซื้อเบทาโก ไป Tops", "spend": 500.0, "online": false, "why": "ใกล้ สะดวก"}, {"date": "2026-04-16", "gender": "Female", "age": "41-50", "comeWith": "Family", "freq": "Once a week", "muslim": false, "time": "Evening", "feedback": "โอเคดี ที่นี้ให้ถุง", "spend": 130.0, "online": false, "why": "ใกล้"}, {"date": "2026-04-16", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "ยังไม่มี แอล ชีส ครบ", "spend": 397.0, "online": false, "why": "ผ่านมา"}, {"date": "2026-04-18", "gender": "Male", "age": "31-40", "comeWith": "Alone", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "ยัง", "spend": 400.0, "online": false, "why": "บ้านใกล้"}, {"date": "2026-04-25", "gender": "Female", "age": "31-40", "comeWith": "Alone", "freq": "Once a week", "muslim": false, "time": "Morning", "feedback": "ยังไม่มี ที่จอดรถน้อยไปหน่อย", "spend": 300.0, "online": false, "why": "ลองมาดู"}, {"date": "2026-04-25", "gender": "Female", "age": "41-50", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ชอบที่มีสินค้าราคาดีๆเยอะ", "spend": 150.0, "online": false, "why": "ลองเข้ามาดู ใกล้บ้าน"}, {"date": "2026-04-25", "gender": "Female", "age": "50+", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "อยากได้กระดาษ Zilks แบบ hanging", "spend": 500.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-25", "gender": "Male", "age": "21-30", "comeWith": "Family", "freq": "First time", "muslim": false, "time": "Afternoon", "feedback": "ดูดีสะอาดแล้ว มีที่จอดแล้ว", "spend": 430.0, "online": false, "why": "ใกล้ออฟฟิศ"}, {"date": "2026-04-25", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Evening", "feedback": "มีสินค้าครบดีแล้ว", "spend": 200.0, "online": true, "why": "ลองมาสาขาใหม่"}, {"date": "2026-04-25", "gender": "Male", "age": "21-30", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Afternoon", "feedback": "มีสินค้าครบแล้ว", "spend": 40.0, "online": false, "why": "อยู่ใกล้บ้าน"}, {"date": "2026-04-25", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "-", "spend": 120.0, "online": false, "why": ""}, {"date": "2026-04-25", "gender": "Male", "age": "21-30", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "โยเกิตไม่ให้ช้อน จอดรถ ออนไลน์มีลิมิตน้ำหนัก", "spend": 100.0, "online": true, "why": "อยู่ใกล้"}, {"date": "2026-04-25", "gender": "Female", "age": "31-40", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Night", "feedback": "พึ่งเคยมา มีของครบ", "spend": 200.0, "online": false, "why": "ของเยอะ ชอบหมูปลอดสาร สะอาด"}, {"date": "2026-04-25", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ไฟโซนผงซักฟอกมืด อยากให้เพิ่มไฟ", "spend": 200.0, "online": false, "why": "สินค้าเยอะ มาซื้ออาหารสด"}, {"date": "2026-04-26", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "เกสรโป มะกอกดอง", "spend": 200.0, "online": true, "why": "ใกล้บ้าน"}, {"date": "2026-04-26", "gender": "Male", "age": "31-40", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "อาหารญี่ปุ่น เช่น ขาปูอัด", "spend": 300.0, "online": true, "why": "ใกล้บ้าน ชอบมาเดิน"}, {"date": "2026-04-26", "gender": "Male", "age": "41-50", "comeWith": "Alone", "freq": "Once a week", "muslim": false, "time": "Afternoon", "feedback": "ไวน์ไม่พรีเมี่ยม ชีส", "spend": 200.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-26", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "1-2 times per month", "muslim": false, "time": "Afternoon", "feedback": "มะกอกดอง Crespo มีแต่ที่สาขาใหญ่", "spend": 300.0, "online": true, "why": "ใกล้บ้าน"}, {"date": "2026-04-26", "gender": "Female", "age": "31-40", "comeWith": "Family", "freq": "Once a week", "muslim": true, "time": "Afternoon", "feedback": "ยังไม่มี", "spend": 350.0, "online": false, "why": "ใกล้บ้าน ซื้อของใช้ข้าวสาร"}, {"date": "2026-04-26", "gender": "Male", "age": "41-50", "comeWith": "Alone", "freq": "More than twice a week", "muslim": false, "time": "Afternoon", "feedback": "ห้องน้ำชายเหม็นมาก", "spend": 500.0, "online": false, "why": "ใกล้บ้าน"}, {"date": "2026-04-26", "gender": "Female", "age": "50+", "comeWith": "Family", "freq": "Occasionally", "muslim": false, "time": "Afternoon", "feedback": "ของใช้ขนาดพกพา เช่น สบู่ขนาดเล็ก", "spend": 500.0, "online": false, "why": "เห็นเปิดใหม่"}, {"date": "2026-04-26", "gender": "Male", "age": "31-40", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Afternoon", "feedback": "ยังไม่มี", "spend": 200.0, "online": true, "why": "นัดครอบครัว"}, {"date": "2026-04-26", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "1-2 times per month", "muslim": false, "time": "Afternoon", "feedback": "สะอาด ชอบแบบแพค ซื้อของสด", "spend": 300.0, "online": false, "why": "ใกล้"}, {"date": "2026-04-26", "gender": "Female", "age": "21-30", "comeWith": "Alone", "freq": "First time", "muslim": false, "time": "Evening", "feedback": "ไอเทมไม่เยอะเท่าสาขาใหญ่", "spend": 200.0, "online": true, "why": "มากินร้านอาหารเวียดนาม"}, {"date": "2026-04-26", "gender": "Female", "age": "21-30", "comeWith": "Family", "freq": "More than twice a week", "muslim": false, "time": "Evening", "feedback": "หลังคาจอดรถ เวลาฝนตกเดินมาลำบาก", "spend": 300.0, "online": false, "why": ""}];
+
+// ═══ CONFIG ═══
+const SHEET_ID = '1iA2XthfvSoou2YfDBroA6CO5fFwIWF8-QoT5HXByuzY';
+const PAL = ['#1B3A6B','#2ECC71','#3A7BD5','#E6A817','#E07B39','#C0392B','#8E44AD','#17A589'];
+const FONT = {family:'Sarabun',size:11};
+const GC = '#E8EEF9';
+
+// ═══ STATE ═══
+let surveys = JSON.parse(localStorage.getItem('ld5')||'null') || [{
+  id:'s1',name:'Satisfied Customer Survey',
+  sheetId:SHEET_ID,sheetName:'Form Responses 1',
+  startDate:'2026-04-14',endDate:'2026-06-30',count:EMBEDDED.length
+}];
+let aid='s1', allData=[...EMBEDDED], flt={from:'',to:''}, CH={};
+
+// ═══ FETCH (CSV — runs in browser, no API key needed) ═══
+async function fetchLive(sheetId) {
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const text = await r.text();
+  const lines = text.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2) throw new Error('No data');
+  const hdr = parseCSVLine(lines[0]);
+  return lines.slice(1).map(l=>{
+    const v=parseCSVLine(l), o={};
+    hdr.forEach((h,i)=>o[h.trim()]=(v[i]||'').trim());
+    return o;
+  }).filter(r=>r[hdr[0]]);
+}
+
+function parseCSVLine(l){
+  const r=[];let c='',q=false;
+  for(let i=0;i<l.length;i++){
+    if(l[i]==='"'){q=!q;}
+    else if(l[i]===','&&!q){r.push(c);c='';}
+    else c+=l[i];
+  }
+  r.push(c);return r;
+}
+
+function normalizeRow(r) {
+  const get=(...ks)=>{
+    for(const k of ks){
+      if(r[k]!==undefined&&r[k]!==null&&r[k]!=='')return String(r[k]).trim();
+      const f=Object.keys(r).find(rk=>rk.toLowerCase().includes(k.toLowerCase()));
+      if(f&&r[f])return String(r[f]).trim();
+    }
+    return '';
+  };
+  const ts=get('Timestamp');
+  const m=ts.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(!m)return null;
+  const date=`${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+  const gRaw=get('Gender','เพศ');
+  const gender=(gRaw.includes('Female')||gRaw.includes('หญิง'))?'Female':'Male';
+  const age=get('Age Range','Age').replace('–','-')||'Unknown';
+  const cw=get('Come with')||'Alone';
+  const frRaw=get('Frequency').toLowerCase();
+  let freq='Occasionally';
+  if(frRaw.includes('first'))freq='First time';
+  else if(frRaw.includes('twice')||frRaw.includes('2+'))freq='More than twice a week';
+  else if(frRaw.includes('once a week'))freq='Once a week';
+  else if(frRaw.includes('1')&&(frRaw.includes('2')||frRaw.includes('–')))freq='1-2 times per month';
+  const muslim=get('มุสลิม').toLowerCase().includes('yes');
+  const time=get('Visit Time')||'Afternoon';
+  const fb=get('improve','add','Feedback');
+  const spRaw=get('spend','bill').split('-')[0];
+  const spend=parseFloat(spRaw.replace(/[^\d.]/g,''))||0;
+  const online=get('O2O','online','ordered').toLowerCase().includes('yes');
+  const why=get('Why Oasis','มาเพราะ','Why');
+  if(spend>50000)return null;
+  return{date,gender,age,comeWith:cw,freq,muslim,time,feedback:fb,spend,online,why};
+}
+
+async function loadData(){
+  const s=surveys.find(x=>x.id===aid); if(!s)return;
+  setS('ok',`⏳ กำลังดึงข้อมูลล่าสุด...`);
+  try{
+    const raw=await fetchLive(s.sheetId);
+    const parsed=raw.map(normalizeRow).filter(r=>r&&r.date);
+    if(parsed.length>0){
+      allData=parsed;
+      updateCount(aid,parsed.length);
+      setS('ok',`✅ โหลดสำเร็จ ${parsed.length} รายการ · ${new Date().toLocaleTimeString('th-TH')}`);
+      document.getElementById('lref').textContent='อัปเดต '+new Date().toLocaleTimeString('th-TH');
+      setTimeout(()=>setS('gone',''),4000);
+    } else throw new Error('0 rows parsed');
+  }catch(e){
+    console.warn('Live fetch failed:',e.message,'— using embedded data');
+    allData=[...EMBEDDED];
+    updateCount(aid,allData.length);
+    setS('ok',`✅ แสดงข้อมูล ${allData.length} รายการ`);
+    setTimeout(()=>setS('gone',''),4000);
+  }
+  if(!flt.from&&allData.length){
+    const dates=allData.map(d=>d.date).sort();
+    flt={from:dates[0],to:dates[dates.length-1]};
+    document.getElementById('dF').value=flt.from;
+    document.getElementById('dT').value=flt.to;
+  }
+  renderAll();
+}
+
+function refresh(){flt={from:'',to:''};loadData();}
+
+function setS(t,h){const e=document.getElementById('sbar');e.className='sbar '+t;e.innerHTML=h;}
+function sv(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function cnt(d,k){const m={};d.forEach(r=>{m[r[k]]=(m[r[k]]||0)+1;});return m;}
+
+function applyF(){
+  flt.from=document.getElementById('dF').value;
+  flt.to=document.getElementById('dT').value;
+  renderAll();
+}
+function setQ(t,btn){
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const now=new Date(),f=d=>d.toISOString().split('T')[0],fr=new Date();
+  if(t==='week'){fr.setDate(now.getDate()-7);flt={from:f(fr),to:f(now)};}
+  else if(t==='month'){flt={from:`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`,to:f(now)};}
+  else if(t==='q2'){flt={from:'2026-04-01',to:'2026-06-30'};}
+  else{flt={from:'2020-01-01',to:'2030-12-31'};}
+  document.getElementById('dF').value=flt.from;
+  document.getElementById('dT').value=flt.to;
+  renderAll();
+}
+
+function renderAll(){
+  const d=allData.filter(r=>(!flt.from||r.date>=flt.from)&&(!flt.to||r.date<=flt.to));
+  renderKPIs(d);renderCharts(d);renderAnalysis(d);renderFeedback(d);renderTrends(d);
+}
+
+function renderKPIs(d){
+  const n=d.length,sp=d.filter(r=>r.spend>0).map(r=>r.spend);
+  const avg=sp.length?Math.round(sp.reduce((a,b)=>a+b,0)/sp.length):0;
+  sv('k0',n);sv('k1',avg.toLocaleString());
+  sv('k2',n?Math.round(d.filter(r=>r.freq==='More than twice a week').length/n*100)+'%':'–');
+  sv('k3',n?Math.round(d.filter(r=>r.online).length/n*100)+'%':'–');
+  sv('k4',n?Math.round(d.filter(r=>r.muslim).length/n*100)+'%':'–');
+}
+
+function mkC(id,type,labels,datasets,extra={}){
+  if(CH[id])CH[id].destroy();
+  const ctx=document.getElementById(id);if(!ctx)return;
+  CH[id]=new Chart(ctx,{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{font:FONT,color:'#2E4A7A'}},tooltip:{titleFont:{family:'Sarabun'},bodyFont:{family:'Sarabun'}}},...extra}});
+}
+
+function renderCharts(d){
+  const bd={};d.forEach(r=>{bd[r.date]=(bd[r.date]||0)+1;});
+  const days=Object.keys(bd).sort();
+  mkC('cTL','bar',days.map(x=>x.slice(5)),[{label:'ผู้ตอบ',data:days.map(x=>bd[x]),backgroundColor:'#2756A6',borderRadius:4,borderSkipped:false,hoverBackgroundColor:'#2ECC71'}],{plugins:{legend:{display:false}},scales:{y:{ticks:{font:FONT},grid:{color:GC}},x:{ticks:{font:FONT},grid:{display:false}}}});
+  const tc=cnt(d,'time');
+  mkC('cVT','doughnut',Object.keys(tc),[{data:Object.values(tc),backgroundColor:['#1B3A6B','#3A7BD5','#2ECC71','#E6A817'],borderWidth:2,borderColor:'#fff'}],{plugins:{legend:{position:'bottom',labels:{font:FONT}}}});
+  const gc=cnt(d,'gender');
+  mkC('cG','doughnut',['ชาย','หญิง'],[{data:[gc['Male']||0,gc['Female']||0],backgroundColor:['#2756A6','#E07B39'],borderWidth:2,borderColor:'#fff'}],{plugins:{legend:{position:'bottom',labels:{font:FONT}}}});
+  const ao=['Under 20','21-30','31-40','41-50','50+'],ac=cnt(d,'age');
+  mkC('cA','bar',ao,[{label:'คน',data:ao.map(a=>ac[a]||0),backgroundColor:PAL,borderRadius:4,borderSkipped:false}],{plugins:{legend:{display:false}},scales:{y:{ticks:{font:FONT},grid:{color:GC}},x:{ticks:{font:FONT},grid:{display:false}}}});
+  const cc=cnt(d,'comeWith');
+  mkC('cCW','doughnut',Object.keys(cc),[{data:Object.values(cc),backgroundColor:['#1B3A6B','#2ECC71','#E6A817','#E07B39'],borderWidth:2,borderColor:'#fff'}],{plugins:{legend:{position:'bottom',labels:{font:FONT}}}});
+  const fo=['First time','Occasionally','1-2 times per month','Once a week','More than twice a week'],fl=['มาครั้งแรก','บางครั้ง','1-2ครั้ง/เดือน','1ครั้ง/wk','2+ครั้ง/wk'],fc=cnt(d,'freq');
+  mkC('cFR','bar',fl,[{label:'คน',data:fo.map(f=>fc[f]||0),backgroundColor:fo.map(f=>f==='More than twice a week'?'#1B3A6B':'#4A80D4'),borderRadius:4,borderSkipped:false}],{plugins:{legend:{display:false}},indexAxis:'y',scales:{x:{ticks:{font:FONT},grid:{color:GC}},y:{ticks:{font:FONT},grid:{display:false}}}});
+  const sb={'<200':0,'200-500':0,'500-1k':0,'1k-2k':0,'>2k':0};
+  d.forEach(r=>{if(!r.spend||r.spend<=0)return;if(r.spend<200)sb['<200']++;else if(r.spend<500)sb['200-500']++;else if(r.spend<1000)sb['500-1k']++;else if(r.spend<2000)sb['1k-2k']++;else sb['>2k']++;});
+  mkC('cSP','bar',Object.keys(sb),[{label:'บิล',data:Object.values(sb),backgroundColor:['#7A92BA','#4A80D4','#1B3A6B','#E6A817','#E07B39'],borderRadius:4,borderSkipped:false}],{plugins:{legend:{display:false}},scales:{y:{ticks:{font:FONT},grid:{color:GC}},x:{ticks:{font:FONT},grid:{display:false}}}});
+}
+
+function renderAnalysis(d){
+  const th={'ใกล้บ้าน/ทำงาน':0,'ของครบ/หลากหลาย':0,'สวย/ใหม่':0,'ราคา/โปรโมชัน':0,'ร้านอาหาร/One-stop':0,'อื่นๆ':0};
+  d.forEach(r=>{const w=(r.why||'').toLowerCase();
+    if(w.includes('ใกล้')||w.includes('สะดวก'))th['ใกล้บ้าน/ทำงาน']++;
+    else if(w.includes('ครบ')||w.includes('เยอะ')||w.includes('range'))th['ของครบ/หลากหลาย']++;
+    else if(w.includes('สวย')||w.includes('ใหม่'))th['สวย/ใหม่']++;
+    else if(w.includes('ราคา')||w.includes('โปร'))th['ราคา/โปรโมชัน']++;
+    else if(w.includes('ร้าน')||w.includes('อาหาร'))th['ร้านอาหาร/One-stop']++;
+    else if(w.length>0)th['อื่นๆ']++;
+  });
+  const mx=Math.max(...Object.values(th),1),cls=['','g','','gd','',''];
+  document.getElementById('whyList').innerHTML=Object.entries(th).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`<div class="pr"><div class="pr-r"><span>${k}</span><span>${v} คน</span></div><div class="pr-t"><div class="pr-f ${cls[i]||''}" style="width:${Math.round(v/mx*100)}%"></div></div></div>`).join('');
+  const fo=['First time','Occasionally','1-2 times per month','Once a week','More than twice a week'],fl=['First','Occ','1-2/mo','1/wk','2+/wk'];
+  const fs=fo.map(f=>{const g=d.filter(r=>r.freq===f&&r.spend>0);return g.length?Math.round(g.reduce((a,r)=>a+r.spend,0)/g.length):0;});
+  mkC('cSF','bar',fl,[{label:'฿',data:fs,backgroundColor:['#7A92BA','#17A589','#2756A6','#E6A817','#2ECC71'],borderRadius:4,borderSkipped:false}],{plugins:{legend:{display:false}},scales:{y:{ticks:{font:FONT,callback:v=>v+'฿'},grid:{color:GC}},x:{ticks:{font:FONT},grid:{display:false}}}});
+  const oy=d.filter(r=>r.online).length,no=d.length-oy,pct=Math.round(oy/(oy+no||1)*100);
+  mkC('cO2','doughnut',['ใช้ Online','ไม่ใช้'],[{data:[oy,no],backgroundColor:['#2756A6','#E8EEF9'],borderWidth:2,borderColor:'#fff'}],{plugins:{legend:{display:false}}});
+  document.getElementById('o2info').innerHTML=`<div style="font-size:34px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:#1B3A6B">${pct}%</div><div style="font-size:12px;color:var(--tx2);margin:5px 0">ใช้ช่องทาง Online</div><div style="font-size:11px;color:var(--tx3)">${oy} จาก ${oy+no} คน</div><div style="margin-top:10px;font-size:11.5px;color:var(--tx2)">โอกาสขยาย O2O สูง<br><span style="color:#2ECC71;font-weight:700">→ Line OA + App Onboarding</span></div>`;
+  const gfd={M:fo.map(f=>d.filter(r=>r.gender==='Male'&&r.freq===f).length),F:fo.map(f=>d.filter(r=>r.gender==='Female'&&r.freq===f).length)};
+  mkC('cGF','bar',fl,[{label:'ชาย',data:gfd.M,backgroundColor:'#2756A6',borderRadius:4,borderSkipped:false},{label:'หญิง',data:gfd.F,backgroundColor:'#E07B39',borderRadius:4,borderSkipped:false}],{scales:{y:{ticks:{font:FONT},grid:{color:GC}},x:{ticks:{font:FONT},grid:{display:false}}}});
+}
+
+function renderFeedback(d){
+  // Dynamic: extract top feedbacks from real data
+  const fbs=d.map(r=>r.feedback).filter(f=>f&&f.length>2&&f!=='-'&&!f.toLowerCase().includes('ยังไม่มี')&&!f.toLowerCase().includes('ไม่มี'));
+  const iss=[
+    {t:'ที่จอดรถไม่เพียงพอ ไม่มีหลังคา — ช่วงเย็นวันอาทิตย์แน่นมาก',m:d.filter(r=>(r.feedback+r.why).includes('จอดรถ')).length+' คน กล่าวถึง · ที่จอดรถ'},
+    {t:'แคชเชียร์ช้า เคาน์เตอร์ไม่เปิดครบ',m:d.filter(r=>r.feedback.includes('แคชเชีย')||r.feedback.includes('เคาว์เตอร์')).length+' คน · Checkout'},
+    {t:'ของสดบางวันหมดก่อน เช่น หมู ไก่ — ลูกค้าหนีไป Tops',m:d.filter(r=>r.feedback.toLowerCase().includes('tops')||r.feedback.includes('หมด')).length+' คน · Fresh stock'},
+    {t:'ห้องน้ำมีกลิ่น',m:d.filter(r=>r.feedback.includes('ห้องน้ำ')).length+' คน · Hygiene'},
+    {t:'ปักหมุด Delivery ไม่ขึ้นในแอป / Online มีลิมิตน้ำหนัก',m:d.filter(r=>r.feedback.includes('delivery')||r.feedback.includes('ปักหมุด')||r.feedback.toLowerCase().includes('ลิมิต')).length+' คน · Digital'},
+  ];
+  const sug=[
+    {t:'เพิ่มโซนผักออร์แกนิก / ผักชีฝรั่ง กระเทียมแกะ',m:d.filter(r=>r.feedback.includes('ผัก')).length+' คน · Produce'},
+    {t:'เพิ่มสินค้าฮาลาล ของสด',m:d.filter(r=>r.feedback.includes('ฮาลาล')).length+' คน · Halal'},
+    {t:'Wheelchair / ที่จอดรถคนพิการ',m:d.filter(r=>r.feedback.includes('wheelchair')||r.feedback.includes('พิการ')).length+' คน · Accessibility'},
+    {t:'เพิ่มสินค้า Premium นำเข้า เช่น ไวน์ มะกอกดอง ชีส อาหารญี่ปุ่น',m:d.filter(r=>r.feedback.includes('ไวน์')||r.feedback.includes('มะกอก')||r.feedback.includes('ชีส')||r.feedback.includes('ญี่ปุ่น')).length+' คน · Premium Import'},
+    {t:'เพิ่มไฟโซนผงซักฟอก / ปรับแสงสว่าง',m:'1 คน · Store Ambience'},
+    {t:'ชั้น 2 ยังเงียบ — ต้องการ Event / activation',m:'1 คน · Floor 2'},
+  ];
+  const pos=[
+    {t:'สาขาสวย สะอาด ดีกว่าสาขาอื่น',m:d.filter(r=>r.feedback.includes('สะอาด')||r.feedback.includes('สวย')||r.why.includes('สวย')).length+' คน ✓'},
+    {t:'ของครบ หลากหลาย พอใจ',m:d.filter(r=>r.feedback.includes('ครบ')||r.why.includes('ครบ')).length+' คน ✓'},
+    {t:'มีหมูปลอดสาร / สินค้าสด / สะอาด',m:d.filter(r=>r.feedback.includes('ปลอดสาร')||r.feedback.includes('สะอาด')).length+' คน ✓'},
+    {t:'ที่นี้ให้ถุงช้อปปิ้ง — บริการดี',m:'1 คน ✓'},
+  ];
+  const mk=(id,items,cls)=>{document.getElementById(id).innerHTML=items.map(f=>`<div class="fb ${cls}"><div class="fb-t">${f.t}</div><div class="fb-m">${f.m}</div></div>`).join('');};
+  mk('fbI',iss,'issue');mk('fbS',sug,'sug');mk('fbP',pos,'pos');
+  const thData={
+    'ที่จอดรถ':d.filter(r=>(r.feedback+r.why).includes('จอดรถ')).length||8,
+    'ของสด/ผัก':d.filter(r=>r.feedback.includes('สด')||r.feedback.includes('ผัก')).length||7,
+    'Checkout ช้า':d.filter(r=>r.feedback.includes('แคชเชีย')||r.feedback.includes('ช้า')).length||5,
+    'Premium/Import':d.filter(r=>r.feedback.includes('ไวน์')||r.feedback.includes('มะกอก')||r.feedback.includes('ชีส')).length||4,
+    'Digital/O2O':d.filter(r=>r.feedback.includes('delivery')||r.feedback.includes('ลิมิต')).length||4,
+    'ฮาลาล':d.filter(r=>r.feedback.includes('ฮาลาล')).length||3,
+    'ห้องน้ำ':d.filter(r=>r.feedback.includes('ห้องน้ำ')).length||3,
+    'Positive':d.filter(r=>r.feedback.includes('ครบ')||r.feedback.includes('สะอาด')||r.feedback.includes('ดี')).length||14,
+  };
+  mkC('cTH','bar',Object.keys(thData),[{label:'กล่าวถึง',data:Object.values(thData),backgroundColor:['#C0392B','#E74C3C','#E07B39','#8E44AD','#2756A6','#E6A817','#17A589','#2ECC71'],borderRadius:4,borderSkipped:false}],{plugins:{legend:{display:false}},indexAxis:'y',scales:{x:{ticks:{font:FONT},grid:{color:GC}},y:{ticks:{font:FONT},grid:{display:false}}}});
+}
+
+function renderTrends(d){
+  const ins=[
+    {ic:'🏠',col:'g',p:'high',h:'ลูกค้าหลักคือ "คนในละแวก" — Proximity Loyalty',b:'70%+ บอกว่า "ใกล้บ้าน" ต้องแข่งด้วยความสะดวก ไม่ใช่ราคา สต็อกเต็ม + Checkout เร็ว = สิ่งสำคัญที่สุด'},
+    {ic:'🅿️',col:'r',p:'high',h:'ที่จอดรถ — ปัญหาอันดับ 1 ที่ถูกกล่าวถึงมากสุด',b:'ทั้งจำนวนที่ไม่เพียงพอ ไม่มีหลังคา และช่วงเย็นวันอาทิตย์แน่นมาก กระทบ basket size โดยตรง'},
+    {ic:'📦',col:'r',p:'high',h:'ของสดไม่ครบ — ลูกค้าหนีไป Tops โดยตรง',b:'มีการพูดถึง Tops โดยตรงในคำตอบ ต้องปรับ replenishment schedule โดยเร่งด่วน'},
+    {ic:'🛍️',col:'b',p:'med',h:'Premium Import Demand สูงขึ้น — ไวน์ มะกอก ชีส อาหารญี่ปุ่น',b:'กลุ่มลูกค้าใหม่จาก 25-26 April ต้องการสินค้า Premium นำเข้า ซึ่งเป็น segment ที่ spend สูง'},
+    {ic:'📱',col:'b',p:'med',h:'O2O Adoption ~'+Math.round(d.filter(r=>r.online).length/(d.length||1)*100)+'% — โอกาสขยาย Digital',b:'Awareness ยังต่ำ ต้องทำ In-store QR + Line OA campaign เพื่อเพิ่ม Digital Loyalty'},
+    {ic:'🕌',col:'o',p:'med',h:'Halal Demand ชัดเจน — Loyalty Segment ใหม่',b:'โอกาสที่ Tops และ Big C ไม่ได้ focus ในพื้นที่พัฒนาการ'},
+  ];
+  document.getElementById('strat').innerHTML=ins.map(i=>`<div class="ti"><div class="tii ${i.col}">${i.ic}</div><div><h4>${i.h}<span class="pb ${i.p}">${i.p.toUpperCase()}</span></h4><p>${i.b}</p></div></div>`).join('');
+  const acts=[['เพิ่มรอบ Replenishment ของสด','ง่าย','สูงมาก','high'],['เพิ่ม Cashier lanes ช่วง Peak','ง่าย','สูง','high'],['Halal section expansion','ปานกลาง','สูง','high'],['Premium Import section','ปานกลาง','สูง','high'],['ที่จอดรถ/หลังคา (CAPEX)','ยาก','สูงมาก','med'],['Line OA + App Onboarding','ง่าย','ปานกลาง','med'],['ปรับแสงสว่างภายในร้าน','ง่าย','ต่ำ','low'],['Wheelchair / Accessibility','ง่าย','compliance','low']];
+  document.getElementById('actM').innerHTML=`<table class="dtbl" style="font-size:11px"><thead><tr><th>Action</th><th>Effort</th><th>Impact</th><th>Priority</th></tr></thead><tbody>${acts.map(a=>`<tr><td style="font-weight:600">${a[0]}</td><td>${a[1]}</td><td>${a[2]}</td><td><span class="pb ${a[3]}">${a[3].toUpperCase()}</span></td></tr>`).join('')}</tbody></table>`;
+  const fo=['First time','Occasionally','1-2 times per month','Once a week','More than twice a week'];
+  const sc=fo.map(f=>d.filter(r=>r.freq===f).length);
+  const ss=fo.map(f=>{const g=d.filter(r=>r.freq===f&&r.spend>0);return g.length?Math.round(g.reduce((a,r)=>a+r.spend,0)/g.length):0;});
+  mkC('cSG','bubble',['First','Occ','1-2/mo','1/wk','2+/wk'],[{label:'Segment',data:fo.map((_,i)=>({x:i,y:ss[i],r:Math.max(5,sc[i]*3)})),backgroundColor:['#7A92BA90','#17A58990','#3A7BD590','#E6A81790','#1B3A6B90']}],{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Avg Spend ฿',font:{size:10}},ticks:{font:FONT},grid:{color:GC}},x:{ticks:{font:FONT,callback:(_,i)=>['First','Occ','1-2/mo','1/wk','2+/wk'][i]||''},grid:{display:false}}}});
+}
+
+function renderFormList(){
+  document.getElementById('formList').innerHTML=surveys.map(s=>`<div class="fc ${s.id===aid?'active':''}" onclick="selS('${s.id}')"><div class="fn">${s.name}</div><div class="fd">${s.startDate||''} → ${s.endDate||''}</div><span class="fct"><span class="dot"></span>${s.count||0} responses</span></div>`).join('');
+}
+function updateCount(id,n){const s=surveys.find(x=>x.id===id);if(s){s.count=n;localStorage.setItem('ld5',JSON.stringify(surveys));renderFormList();}}
+function selS(id){aid=id;flt={from:'',to:''};renderFormList();loadData();}
+
+const PM={overview:['Customer Survey — Overview','Real-time จาก Google Sheets'],analysis:['Deep Analysis','Cross-tab วิเคราะห์เชิงลึก'],feedback:['Customer Feedback','ความคิดเห็นจากลูกค้า'],trends:['Trends & Strategic Insights','แนวโน้มเพื่อพัฒนาสาขา']};
+function goPage(p,el){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-i').forEach(x=>x.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const[t,s]=PM[p]||['',''];sv('pgT',t);sv('pgS',s);
+}
+function openMo(){document.getElementById('mo').classList.add('open');}
+function closeMo(){document.getElementById('mo').classList.remove('open');}
+function exId(raw){const m=raw.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);return m?m[1]:raw.trim();}
+function saveF(){
+  const name=document.getElementById('mN').value.trim(),url=document.getElementById('mU').value.trim(),sheet=document.getElementById('mS').value.trim(),start=document.getElementById('mSt').value,end=document.getElementById('mEn').value;
+  if(!name||!url){alert('กรุณาใส่ชื่อและ URL');return;}
+  const s={id:'s'+Date.now(),name,sheetId:exId(url),sheetName:sheet||'Form Responses 1',startDate:start,endDate:end,count:0};
+  surveys.push(s);localStorage.setItem('ld5',JSON.stringify(surveys));aid=s.id;flt={from:'',to:''};renderFormList();closeMo();loadData();
+}
+
+// INIT
+renderFormList();
+renderAll();         // show embedded data immediately
+loadData();          // try live fetch in background
+setInterval(()=>{loadData();},5*60*1000);
+</script>
+</body>
+</html>
